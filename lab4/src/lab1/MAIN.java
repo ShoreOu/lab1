@@ -6,12 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.Vector;
-
+import java.util.*;
 /**
  * @since  2017/9/05
  * @author 阿杜
@@ -28,9 +23,9 @@ public class MAIN
 	 *	      但是并不对重复出现的单词进行处理，即单词"a"出现了三次，那么就按照出现的循序存储三次，所以words_original的长度
 	 *	  等于文本单词的综合
 	 */	
-	public String[] words_original;	//初始的所有单词数组,按读进来的数据中的次序依次将文章拆分成单词
+	public String[] wordsoriginal;	//初始的所有单词数组,按读进来的数据中的次序依次将文章拆分成单词
 	
-	public Vector<String> edge=new Vector<>();//顶点数组
+	public ArrayList<String> edge=new ArrayList<>();//顶点数组
 	
 	/**
 	 * @变量名： int vertex;
@@ -49,7 +44,7 @@ public class MAIN
 	 * 	  如果单词A到B有路径，那么将 key= "A -> B",value=权值（即"A -> B"出现的次数）;
 	 *   可以按照某个边"A - >B"取出其权值
 	 */
-	public Map<String, Integer> edge_weight=new HashMap<String,Integer>();
+	public Map<String, Integer> edgeweight=new HashMap<String,Integer>();
 	
 	
 		//将所有的边对按顺序保存下来；如：边A,B变成 "A -> B"放入edge_edge中(可以按循序读出来)
@@ -59,7 +54,7 @@ public class MAIN
 	 * 详解：      
 	 * 	  将所有边按照在文本中出现的次序放入edge_edge中，若某条边 "A -> B"先后出现两次，那么起出现位置以第一次出现的为准
 	 */
-	public Vector<String> edge_edge=new Vector<String>();
+	public ArrayList <String> edgeedge=new ArrayList<String>();
 	
 
 	/**
@@ -71,7 +66,7 @@ public class MAIN
 	 *   number_vertix可按照数字读取对应单词；vertex_number可按照单词读出对应的数字,两者可以对照使用，是的临界矩阵和顶点关系更灵活
 	 * 
 	 */
-	public Map<String, Integer> vertex_number=new HashMap<String,Integer>();
+	public Map<String, Integer> vertexnumber=new HashMap<String,Integer>();
 	
 	
 	/**
@@ -81,7 +76,7 @@ public class MAIN
 	 * 	   在vertex_number中已经给每个顶点对照一个数字，即可用顶点名称取出对应的数字，那么number_vextex可以根据顶点编号取出顶点名称
 	 *   比如edge_matrix[i][j]表示第i个顶点到第j个顶点的路径，那么此时只要找出数字i,j对应的顶点名称即可知道那两条边存在路径
 	 */
-	public Map<Integer,String> number_vertex=new HashMap<Integer,String>();
+	public Map<Integer,String> numbervertex=new HashMap<Integer,String>();
 	
 	/**
 	 * @int[][] edge_matrix;
@@ -92,14 +87,14 @@ public class MAIN
 	 *    （因为编号和顶点名称相互对应，所有可知道每个顶点之间的路径关系）
 	 *    
 	 */
-	public int [][] edge_matrix=null;
+	public int [][] edgematrix=null;
 	
 	//初始化邻接矩阵的值，如果权值为10000，则没有路径
-	int max_weight=100000;
+	int max_weight=10000;
 	
 	
 	//一个点到所有点的路径
-	public GraphViz gv_1 = new GraphViz();
+	public GraphViz gv1 = new GraphViz();
 	
 	
 	/*************************************************************************
@@ -114,11 +109,11 @@ public class MAIN
 	     /**
 	      * 按循序遍历边容器，依次取出每条边和此边的权重，权重作为路径的label;
 	      */
-		for(int i=0;i<this.edge_edge.size();i++)
+		for(int i=0;i<this.edgeedge.size();i++)
 		{
 
-			String add_edge=this.edge_edge.elementAt(i);//一对边
-			String strweight=this.edge_weight.get(add_edge).toString();//边的权值
+			String add_edge=this.edgeedge.get(i);//一对边
+			String strweight=this.edgeweight.get(add_edge).toString();//边的权值
 			String style=add_edge+"[ label="+strweight+"]"+";";
 			gv.add(style);
 		}
@@ -132,13 +127,13 @@ public class MAIN
 	     * gv.getGraph( gv.getDotSource(), type ) --将字符串转换成字节数组
 	     * writeGraphToFile --将图片输出到文件out中
 	     */
-	    gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );
+	    gv.writeGraphToFile(gv.getGraph(gv.getDotSource(), type), out);
 	    
 	    try {
 			Desktop.getDesktop().open(new File("OUT.jpg"));
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	  e.printStackTrace();
+	}
 	}
 	
 	
@@ -159,23 +154,23 @@ public class MAIN
 		String temp=word1+" -> "+word2; //连个单词组成的边名称
 		
 		//如果顶点word1到word2有相邻路径则两个单词之间没有bridgeword
-		if(this.edge_edge.contains(temp)==true)
+		if(this.edgeedge.contains(temp)==true)
 		{
 			return ("N0 bridge words from "+word1+" to "+word2+"!");
 		}
 		//如果两个单词不相邻，查看这两个单词在不在顶点集中
-		else if(this.vertex_number.containsKey(word1) && this.vertex_number.containsKey(word2))
+		else if(this.vertexnumber.containsKey(word1) && this.vertexnumber.containsKey(word2))
 		{
-			int wordnum1=this.vertex_number.get(word1);
-			int wordnum2=this.vertex_number.get(word2);
+			int wordnum1=this.vertexnumber.get(word1);
+			int wordnum2=this.vertexnumber.get(word2);
 		
 			for(int i=0;i<this.vertex;i++)
 			{
-				if(this.edge_matrix[wordnum1][i]!=this.max_weight)
+				if(this.edgematrix[wordnum1][i]!=this.max_weight)
 				{
-					if(this.edge_matrix[i][wordnum2]!=this.max_weight)
+					if(this.edgematrix[i][wordnum2]!=this.max_weight)
 					{
-						bridgewords+=this.number_vertex.get(i)+", ";			
+						bridgewords+=this.numbervertex.get(i)+", ";			
 					}
 				}
 			}
@@ -189,7 +184,7 @@ public class MAIN
 		}
 
 		//word1或者word2不在顶点集中
-		else if(this.vertex_number.containsKey(word1)==false || this.vertex_number.containsKey(word2)==false)
+		else if(this.vertexnumber.containsKey(word1)==false || this.vertexnumber.containsKey(word2)==false)
 		{
 			bridgewords=bridgewords+"No "+word1+" or "+word2+ " in the graph!";
 			return bridgewords;
@@ -223,19 +218,19 @@ public class MAIN
 			
 
 			//如果两个单词都在原来的文本中
-			if(this.vertex_number.containsKey(inputWords[i]) && this.vertex_number.containsKey(inputWords[i+1]))
+			if(this.vertexnumber.containsKey(inputWords[i]) && this.vertexnumber.containsKey(inputWords[i+1]))
 			{
-				int wordnum1=this.vertex_number.get(inputWords[i]);
-				int wordnum2=this.vertex_number.get(inputWords[i+1]);
+				int wordnum1=this.vertexnumber.get(inputWords[i]);
+				int wordnum2=this.vertexnumber.get(inputWords[i+1]);
 				for(int j=0;j<this.vertex;j++)
 				{
-					if(this.edge_matrix[wordnum1][j]!=this.max_weight)
+					if(this.edgematrix[wordnum1][j]!=this.max_weight)
 					{
-						if(this.edge_matrix[j][wordnum2]!=this.max_weight)
+						if(this.edgematrix[j][wordnum2]!=this.max_weight)
 						{
-							if(this.edge_matrix[wordnum1][wordnum2]==this.max_weight)//两个单词之间不能有路径
+							if(this.edgematrix[wordnum1][wordnum2]==this.max_weight)//两个单词之间不能有路径
 							{
-								vectemp.add(this.number_vertex.get(j));
+								vectemp.add(this.numbervertex.get(j));
 							}
 						}
 					}
@@ -272,7 +267,7 @@ public class MAIN
 		Map<String, Integer> min_edge_weigth=new HashMap<String, Integer>();//亮点最短路径经过的边和权值
 		
 		//先判断这两个单词是否在顶点集中
-		if(this.vertex_number.containsKey(word1)==false || this.vertex_number.containsKey(word2)==false)
+		if(this.vertexnumber.containsKey(word1)==false || this.vertexnumber.containsKey(word2)==false)
 		{
 			return  "No "+word1+" or "+word2+ "in the graph!";
 		}
@@ -284,7 +279,7 @@ public class MAIN
 		{
 			for(int j=0;j<this.vertex;j++)
 			{
-				D[i][j]=this.edge_matrix[i][j];
+				D[i][j]=this.edgematrix[i][j];
 				P[i][j]=-1;
 			}
 		}
@@ -304,8 +299,8 @@ public class MAIN
 			}
 		}
 		 
-		int i=this.vertex_number.get(word1);
-		int j=this.vertex_number.get(word2);
+		int i=this.vertexnumber.get(word1);
+		int j=this.vertexnumber.get(word2);
 		 min_pass_edge.add(word1);
 		if(D[i][j]!=this.max_weight &&i!=j)
         { 
@@ -315,7 +310,7 @@ public class MAIN
 		
 		
 		//如果两个单词不可达
-		if(min_pass_edge.size()==2 && (min_pass_edge.get(0)).equals(word1)&&(min_pass_edge.get(1)).equals(word2)&&this.edge_edge.contains(word1+" -> "+word2)==false)
+		if(min_pass_edge.size()==2 && (min_pass_edge.get(0)).equals(word1)&&(min_pass_edge.get(1)).equals(word2)&&this.edgeedge.contains(word1+" -> "+word2)==false)
 		{
 			return "No pass from "+word1+" to "+word2+ " !";
 		}
@@ -336,19 +331,19 @@ public class MAIN
 			 String frist=min_pass_edge.get(k);
 			 String next=min_pass_edge.get(k+1);
 			 String tempstring=frist+" -> "+next;//边
-			 int fristnum=this.vertex_number.get(frist);	//两个顶点的编号
-			 int nextnumm=this.vertex_number.get(next);
-			 int tempweigt=this.edge_matrix[fristnum][nextnumm];//权值
+			 int fristnum=this.vertexnumber.get(frist);	//两个顶点的编号
+			 int nextnumm=this.vertexnumber.get(next);
+			 int tempweigt=this.edgematrix[fristnum][nextnumm];//权值
 			 min_edge_weigth.put(tempstring, tempweigt);
 		 }
 		 
 		 //	绘制边的时候，如果边在min_edge_weight中用凸显的颜色标识否则用默认颜色
 		GraphViz gv = new GraphViz();
 	    gv.addln(gv.start_graph());	
-	    for(int k=0;k<this.edge_edge.size();k++)
+	    for(int k=0;k<this.edgeedge.size();k++)
 		{			
-			String add_edge=this.edge_edge.elementAt(k);//一对边
-			String strweight=this.edge_weight.get(add_edge).toString();//边的权值
+			String add_edge=this.edgeedge.get(k);//一对边
+			String strweight=this.edgeweight.get(add_edge).toString();//边的权值
 			String style=null;	
 				
 			//如果边add_edge在min_edge_weight中,则颜色为红色
@@ -360,8 +355,7 @@ public class MAIN
 			//否则为默认
 			else {
 				style=add_edge+"[ label="+strweight+"]"+";";
-			}				
-		
+			}					
 			gv.add(style);
 		}
 			
@@ -369,12 +363,12 @@ public class MAIN
         //System.out.println(gv.getDotSource());  
 		String type = "gif";
 	    File out = new File("minpass." + type);    
-	    gv.writeGraphToFile( gv.getGraph( gv.getDotSource(), type ), out );		 
+	    gv.writeGraphToFile(gv.getGraph(gv.getDotSource(), type), out);		 
 	    try {
 			Desktop.getDesktop().open(new File("minpass.GIF"));
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	  e.printStackTrace();
+	}
 		return returnstring;
 	}
 	
@@ -408,7 +402,7 @@ public class MAIN
 		
 		//String strat_edge=this.number_vertex.get(frist_number);//其实顶点
 		//将第一个边加入strresult中
-		strresult=strresult+this.number_vertex.get(frist_number)+" ";
+		strresult=strresult+this.numbervertex.get(frist_number)+" ";
 		
 		Scanner in=new Scanner(System.in);
 		System.out.print("是否继续(Y/N): ");
@@ -430,9 +424,9 @@ public class MAIN
 		    for(int j=0;j<vertex;j++)
 		    {
 		    	//将于frist_number有路径的顶点名称放入vectemp中
-		    	if(edge_matrix[frist_number][j]!=this.max_weight)
+		    	if(edgematrix[frist_number][j]!=this.max_weight)
 		    	{	
-		    		vectemp.add(this.number_vertex.get(j));
+		    		vectemp.add(this.numbervertex.get(j));
 		    	}
 		    }
 		    
@@ -448,7 +442,7 @@ public class MAIN
 		    	Random r1=new Random();
 				int next_number=r1.nextInt(vectemp.size());
 				//如果边 "strat_number -> next "没出现过则继续，否则结束并返回结果,从vectemp中取出随即边vectemp.get(next_number)
-				String temp=this.number_vertex.get(frist_number)+" -> "+vectemp.get(next_number);
+				String temp=this.numbervertex.get(frist_number)+" -> "+vectemp.get(next_number);
 				
 				//如果改变是第一条边，则结束
 				//if(vecresult.contains(temp)==false)
@@ -458,7 +452,7 @@ public class MAIN
 					vecresult.add(temp);
 					strresult=strresult+vectemp.get(next_number)+" ";
 					//next_number对应的边成为新的起始点frist_number，
-					frist_number=this.vertex_number.get(vectemp.get(next_number));
+					frist_number=this.vertexnumber.get(vectemp.get(next_number));
 					
 					 System.out.print("是否继续(Y/N): ");
 					 String choose=in.next();
@@ -481,7 +475,7 @@ public class MAIN
 					vecresult.add(temp);
 					strresult=strresult+vectemp.get(next_number)+" ";
 					//next_number对应的边成为新的起始点frist_number，
-					frist_number=this.vertex_number.get(vectemp.get(next_number));
+					frist_number=this.vertexnumber.get(vectemp.get(next_number));
 				}	
 				 else 
 				{
@@ -515,7 +509,7 @@ public class MAIN
 		 * @author 阿杜
 		 * @param args
 		 **************************************************************************/
-	public static void main(String[] args) 
+	public static void main(String[] args)throws Exception 
 	{
 			MAIN obj1=new MAIN();
 			String str=new String();
@@ -557,7 +551,7 @@ public class MAIN
 						}
 						br.close();
 					}catch (Exception e) {
-						e.printStackTrace();
+			  e.printStackTrace();
 					}
 					
 					break;
@@ -573,7 +567,7 @@ public class MAIN
 			
 			String str1=str.replaceAll("[^a-zA-Z]+", " ");
 			String str2=str1.toLowerCase();
-			obj1.words_original=str2.split("[\\s]");
+			obj1.wordsoriginal=str2.split("[\\s]");
 			
 		
 			
@@ -582,22 +576,22 @@ public class MAIN
 			* 生成图   ,将每条边转换成字符串对加入map edge_weight 中；其中key是边，value是权值（边出现的次数）,计算每条边出现的个数
 			* 同时 将每一条"A -> B"边按出现的次数存放 vector edge_edge中(是为了将边按循序读出来)
 			*/
-			for(int i=0;i<obj1.words_original.length-1;i++)
+			for(int i=0;i<obj1.wordsoriginal.length-1;i++)
 			{
-				String temp=obj1.words_original[i]+" -> "+obj1.words_original[i+1];
+				String temp=obj1.wordsoriginal[i]+" -> "+obj1.wordsoriginal[i+1];
 				
 				//第一次加入时权值为1
-				if(obj1.edge_weight.containsKey(temp)==false)
+				if(obj1.edgeweight.containsKey(temp)==false)
 				{
-					obj1.edge_edge.add(temp);//将新的一对边放进vector edge_dege后面(若重复出现则按照第一次插入的为准
-					obj1.edge_weight.put(temp, 1);
+					obj1.edgeedge.add(temp);//将新的一对边放进vector edge_dege后面(若重复出现则按照第一次插入的为准
+					obj1.edgeweight.put(temp, 1);
 				}
 				
 				//如果已经有了边和权值，则权值加一
 				else {
-					int nutemp=obj1.edge_weight.get(temp);
+					int nutemp=obj1.edgeweight.get(temp);
 					nutemp+=1;
-					obj1.edge_weight.put(temp, nutemp);
+					obj1.edgeweight.put(temp, nutemp);
 				}
 			}
 			
@@ -608,26 +602,26 @@ public class MAIN
 			 * 给每个定点赋给一个值，来表示每个定点在邻接矩阵的表示的数字
 			 */
 			int number=-1;//每条边对应的数字，从零开始
-			for(int i=0;i<obj1.words_original.length;i++)
+			for(int i=0;i<obj1.wordsoriginal.length;i++)
 			{
 				//vertex_number，number_vertex每个key和value相反
-				if( obj1.vertex_number.containsKey(obj1.words_original[i])==false)
+				if(obj1.vertexnumber.containsKey(obj1.wordsoriginal[i])==false)
 				{
 					number+=1;
-					obj1.vertex_number.put(obj1.words_original[i], number);
-					obj1.number_vertex.put(number,obj1.words_original[i]);
-					obj1.edge.add(obj1.words_original[i]);
+					obj1.vertexnumber.put(obj1.wordsoriginal[i], number);
+					obj1.numbervertex.put(number,obj1.wordsoriginal[i]);
+					obj1.edge.add(obj1.wordsoriginal[i]);
 				}
 			}
-			obj1.vertex=obj1.number_vertex.size();
+			obj1.vertex=obj1.numbervertex.size();
 	
 			//邻接矩阵初始化，全部为max_weight
-			obj1.edge_matrix=new int[obj1.vertex][obj1.vertex];
+			obj1.edgematrix=new int[obj1.vertex][obj1.vertex];
 			for(int i=0;i<obj1.vertex;i++)
 			{
 				for(int j=0;j<obj1.vertex;j++)
 				{
-					obj1.edge_matrix[i][j]=obj1.max_weight;
+					obj1.edgematrix[i][j]=obj1.max_weight;
 				}
 			}
 			
@@ -636,13 +630,13 @@ public class MAIN
 			{
 				for(int j=0;j<obj1.vertex;j++)
 				{
-					String edgei=obj1.number_vertex.get(i);
-					String edgej=obj1.number_vertex.get(j);
+					String edgei=obj1.numbervertex.get(i);
+					String edgej=obj1.numbervertex.get(j);
 					//如果这两个边之间有路径
-					if(obj1.edge_weight.containsKey(edgei+" -> "+edgej))
+					if(obj1.edgeweight.containsKey(edgei+" -> "+edgej))
 					{
-						int weight=obj1.edge_weight.get(edgei+" -> "+edgej);
-						obj1.edge_matrix[i][j]=weight;
+						int weight=obj1.edgeweight.get(edgei+" -> "+edgej);
+						obj1.edgematrix[i][j]=weight;
 					}
 				}
 			}
@@ -681,7 +675,7 @@ public class MAIN
 			 
 			 //一个点到所有点的最短路径
 			 System.out.println(" \n ******************* 一个单词到所有单词之间的最短路径:******************* ");
-			 obj1.gv_1.addln(obj1.gv_1.start_graph());	
+			 obj1.gv1.addln(obj1.gv1.start_graph());	
 			 System.out.print("请输入一个单词:");
 			 String word3=cin.nextLine();
 			 obj1.calcShortestPath(word3);
@@ -699,14 +693,14 @@ public class MAIN
 				fr.close();
 				
 			}catch (Exception e) {
-				e.printStackTrace();
-			}
+	  e.printStackTrace();
+	}
 			
 		    try {
 				Desktop.getDesktop().open(new File("outrandwalk.txt"));
 			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	  e.printStackTrace();
+	}
 	}
 		
 	
@@ -719,7 +713,7 @@ public class MAIN
 		if(k != -1)
 		{
 			print_minpass(p, i, k,min_pass_edge);
-			min_pass_edge.addElement(this.number_vertex.get(k));
+			min_pass_edge.addElement(this.numbervertex.get(k));
 			print_minpass(p, k, j,min_pass_edge);	
 		}
 	}
@@ -770,24 +764,23 @@ public class MAIN
 				 }
 			 }
 			 
-			    for(int k=0;k<this.edge_edge.size();k++)
-				{			
-					String add_edge=this.edge_edge.elementAt(k);//一对边
-					String strweight=this.edge_weight.get(add_edge).toString();//边的权值
-					this.gv_1.add(add_edge+"[ label="+strweight+"]"+";");
+			    for(int k=0;k<this.edgeedge.size();k++){			
+					String add_edge=this.edgeedge.get(k);//一对边
+					String strweight=this.edgeweight.get(add_edge).toString();//边的权值
+					this.gv1.add(add_edge+"[ label="+strweight+"]"+";");
 				}
 			    
-			    this.gv_1.addln(this.gv_1.end_graph());
+			    this.gv1.addln(this.gv1.end_graph());
 		        //System.out.println(gv.getDotSource());  
 				String type = "gif";
 			    File out = new File("minpass_1." + type);    
-			    this.gv_1.writeGraphToFile( this.gv_1.getGraph( this.gv_1.getDotSource(), type ), out );
+			    this.gv1.writeGraphToFile(this.gv1.getGraph(this.gv1.getDotSource(), type), out);
 			    
 			    try {
 					Desktop.getDesktop().open(new File("minpass_1." + type));
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+	}
 	 }
 	 
 	 
@@ -807,7 +800,7 @@ public class MAIN
 			{
 				for(int j=0;j<this.vertex;j++)
 				{
-					D[i][j]=this.edge_matrix[i][j];
+					D[i][j]=this.edgematrix[i][j];
 					P[i][j]=-1;
 				}
 			}
@@ -827,8 +820,8 @@ public class MAIN
 				}
 			}
 			 
-			int i=this.vertex_number.get(word1);
-			int j=this.vertex_number.get(word2);
+			int i=this.vertexnumber.get(word1);
+			int j=this.vertexnumber.get(word2);
 			 min_pass_edge.add(word1);
 			if(D[i][j]!=this.max_weight &&i!=j)
 	        { 
@@ -837,14 +830,13 @@ public class MAIN
 			min_pass_edge.add(word2);
 			 
 			 //将亮点间的最短路径经过的边和权值加入min_edge_weight中,
-			 for(int k=0;k<min_pass_edge.size()-1;k++)
-			 {
+			 for(int k=0;k<min_pass_edge.size()-1;k++){
 				 String frist=min_pass_edge.get(k);
 				 String next=min_pass_edge.get(k+1);
 				 String tempstring=frist+" -> "+next;//边
 	
 				 String style=tempstring+"[ color="+cl+"]"+";";
-				 this.gv_1.add(style); 
+				 this.gv1.add(style); 
 			 }
 		}
 }

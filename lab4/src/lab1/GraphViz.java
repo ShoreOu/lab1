@@ -68,8 +68,7 @@ private StringBuilder graph = new StringBuilder();
 * Constructor: creates a new GraphViz object that will contain
 * a graph.
 */
-public GraphViz() {
-}
+public GraphViz() {}
 
 /**
 * Returns the graph's source description in dot language.
@@ -180,20 +179,22 @@ FileInputStream in = new FileInputStream(img.getAbsolutePath());
 img_stream = new byte[in.available()];
 in.read(img_stream);
 // Close it if we need to
-if( in != null ) in.close();
+if(in != null) in.close();
 
 if (img.delete() == false) 
    System.err.println("Warning: " + img.getAbsolutePath() + " could not be deleted!");
 }
-catch (java.io.IOException ioe) {
-System.err.println("Error:    in I/O processing of tempfile in dir " + GraphViz.TEMP_DIR+"\n");
-System.err.println("       or in calling external command");
-ioe.printStackTrace();
-}
-catch (java.lang.InterruptedException ie) {
-System.err.println("Error: the execution of the external program was interrupted");
-ie.printStackTrace();
-}
+catch (java.io.IOException ioe)		 
+	{
+	  System.err.println("Error:    in I/O processing of tempfile in dir " + GraphViz.TEMP_DIR+"\n");
+	  System.err.println("       or in calling external command");
+	  ioe.printStackTrace();
+	}
+catch (java.lang.InterruptedException ie)
+	{
+	  System.err.println("Error: the execution of the external program was interrupted");
+	  ie.printStackTrace();
+	}
 
 return img_stream;   }
 /**
@@ -213,9 +214,9 @@ fout.write(str);
 fout.close();
 }
 catch (Exception e) {
-System.err.println("Error: I/O error while writing the dot source to temp file!");
-return null;
-}
+	  System.err.println("Error: I/O error while writing the dot source to temp file!");
+	  return null;
+	}
 return temp;
 }
 
@@ -257,8 +258,8 @@ sb.append(line);
 dis.close();
 } 
 catch (Exception e) {
-System.err.println("Error: " + e.getMessage());
-}
+	  System.err.println("Error: " + e.getMessage());
+	}
 
 this.graph = sb;
 }
