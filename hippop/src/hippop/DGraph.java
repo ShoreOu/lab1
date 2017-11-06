@@ -32,7 +32,7 @@ public class DGraph {
 			G[list.indexOf(s[i])][list.indexOf(s[i+1])]+=1;
 		}
 	}
-	public void queryBridgeWords(){
+	public String queryBridgeWords(){
 		List<String> tmp=new ArrayList<String>();
 		Scanner sc=new Scanner(System.in);
 		System.out.println("waiting Bridge:enter two words"); 
@@ -40,10 +40,22 @@ public class DGraph {
 		String b=sc.next();
 		tmp=Bridge(a, b);
 		if(tmp.contains("0")){
-			System.out.println("No bridge words from word1 to word2!");
+			return "No bridge words from word1 to word2!";
 		}
-		else if(tmp.contains("-1")) System.out.println("No word1 or word2 in the graph!");
-		else System.out.println("The bridge words from "+a+" to "+b+" are: "+tmp);
+		else if(tmp.contains("-1")) return "No word1 or word2 in the graph!";
+		else return "The bridge words from "+a+" to "+b+" are: "+tmp;
+	}
+	public String queryBridgeWords(String a){
+	  return "Please enter two words!";
+	}
+	public String queryBridgeWords(String a,String b){
+		List<String> tmp=new ArrayList<String>();
+		tmp=Bridge(a, b);
+		if(tmp.contains("0")){
+			return "No bridge words from word1 to word2!";
+		}
+		else if(tmp.contains("-1")) return "No word1 or word2 in the graph!";
+		else return "The bridge words from "+a+" to "+b+" are: "+tmp;
 	}
 	public List<String> Bridge(String a,String b)
 	{
