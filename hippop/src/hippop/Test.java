@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Test {
 	public static void main(String[] args) throws Exception{  
+		
 		String[] s=readFileByChars("C:/Users/Administrator/Desktop/test.txt","C:/Users/Administrator/Desktop/test1.txt");
 		DGraph g=new DGraph(s);
 //		showDirectedGraph(s);

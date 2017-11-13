@@ -98,11 +98,11 @@ public class DGraph {
 		for(i=0;i<tmp.size();i++) System.out.print(tmp.get(i)+" ");
 		System.out.print("\n");
 	}
-	public void calcShortestPath(String s,String m){
+	public String calcShortestPath(String s,String m){
 		List<String> tmp=new ArrayList<String>();
+		List<String> tmp2=new ArrayList<String>();
 		if(!list.contains(s)||!list.contains(m)){
-			System.out.println("No word ");
-			return;
+			return "No word1 or word2.";
 		}
 		int v=list.indexOf(s);
 		int v1=list.indexOf(m);
@@ -160,12 +160,18 @@ public class DGraph {
 		}
 		tmp.add(list.get(t));
 		tmp.add(s);
-		for(i=tmp.size()-1;i>0;i--)
-		System.out.print(tmp.get(i)+"->");
-		System.out.println(tmp.get(0));
-		System.out.println("the length is :"+D[v1]);
-		}
-		else System.out.println("no way");
+//		for(i=tmp.size()-1;i>0;i--)
+//		System.out.print(tmp.get(i)+"->");
+//		System.out.println(tmp.get(0));
+//		System.out.println("the length is :"+D[v1]);
+//		}
+		for(i=tmp.size()-1,j=0;i>0;i--,j++)
+			tmp2.add(tmp.get(i)+"->");
+			tmp2.add(tmp.get(0));
+			tmp2.add(" the length is :"+D[v1]);		
+			return tmp2.toString();
+			}
+		else return("no way");
 	};
 	public void randomWalk()throws Exception{
 		Scanner sc=new Scanner(System.in);
